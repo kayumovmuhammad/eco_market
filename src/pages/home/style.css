@@ -1,0 +1,286 @@
+a {
+  text-decoration: none;
+}
+
+:root {
+  --bg: #f7fbff;
+  --card-bg: #ffffff;
+  --muted: #6b7280;
+  --accent: #1e6fff; /* основной синий — поменяй на свой hex при необходимости */
+  --accent-2: rgba(30, 111, 255, 0.08);
+  --glass: rgba(30, 111, 255, 0.06);
+  --radius: 12px;
+  --max-width: 80%;
+  --shadow-sm: 0 6px 20px rgba(15, 23, 42, 0.05);
+  --text: #0f172a;
+}
+
+/* Базовая типография */
+* {
+  box-sizing: border-box;
+}
+body,
+html,
+#root {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial;
+  background: linear-gradient(180deg, #fbfdff 0%, var(--bg) 100%);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Контейнер */
+.container {
+  max-width: var(--max-width);
+  margin: 0 50px 0 auto;
+  padding: 28px 20px;
+}
+
+/* Header */
+.landing-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  /* gap: 5px; */
+}
+.logo {
+  width: 44px;
+  height: 44px;
+}
+.brand-text {
+  font-weight: 700;
+  letter-spacing: 0.1px;
+  color: var(--text);
+  font-size: large;
+}
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.nav a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 14px;
+}
+.btn {
+  font-size: 14px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 0;
+}
+.btn:focus {
+  outline: 3px solid rgba(30, 111, 255, 0.18);
+  outline-offset: 2px;
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--muted);
+}
+.btn-primary {
+  background: linear-gradient(180deg, var(--accent) 0%, #2b82ff 100%);
+  color: white;
+  box-shadow: var(--shadow-sm);
+  border-radius: 10px;
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  transition: transform 0.18s ease;
+}
+.btn-secondary {
+  background: transparent;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  color: var(--text);
+  border-radius: 10px;
+}
+
+/* Hero */
+.hero {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+  padding-top: 34px;
+  padding-bottom: 34px;
+}
+.hero-left {
+  flex: 1;
+  min-width: 260px;
+}
+.title {
+  margin: 0 0 12px;
+  font-size: 28px;
+  line-height: 1.05;
+  color: var(--text);
+}
+.subtitle {
+  margin: 0 0 18px;
+  color: var(--muted);
+  max-width: 58ch;
+}
+
+.hero-ctas {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.metrics {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+.metric {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.6));
+  padding: 10px 14px;
+  border-radius: 10px;
+  box-shadow: var(--shadow-sm);
+  min-width: 130px;
+}
+.metric-value {
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--text);
+}
+.metric-label {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* right illustration */
+.hero-right {
+  width: 320px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.card-illustration {
+  width: 100%;
+  max-width: 320px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, var(--card-bg), var(--card-bg));
+  box-shadow: var(--shadow-sm);
+  padding: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Sections */
+.section-title {
+  font-size: 20px;
+  margin: 18px 0;
+  color: var(--text);
+}
+.how .steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.step {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: var(--shadow-sm);
+}
+.step h3 {
+  margin: 8px 0 6px;
+  font-size: 16px;
+}
+.step p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+.step-icon svg {
+  width: 44px;
+  height: 44px;
+}
+
+/* benefits */
+.benefits .benefit-list {
+  display: flex;
+  gap: 12px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  color: var(--muted);
+}
+.benefits .benefit-list li {
+  background: var(--card-bg);
+  padding: 12px;
+  border-radius: 10px;
+  box-shadow: var(--shadow-sm);
+}
+
+/* footer */
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 26px 0 60px;
+  border-top: 1px solid rgba(15, 23, 42, 0.04);
+}
+.footer .muted {
+  color: var(--muted);
+  margin: 6px 0 0;
+  font-size: 13px;
+}
+
+/* small helpers */
+.divider {
+  width: 1px;
+  height: 36px;
+  background: rgba(15, 23, 42, 0.04);
+}
+.link {
+  color: var(--muted);
+  text-decoration: none;
+  margin-left: 10px;
+}
+
+/* Responsive */
+
+@media (max-width: 880px) {
+  .hero {
+    flex-direction: column-reverse;
+    gap: 18px;
+  }
+  .hero-right {
+    width: 100%;
+  }
+  .how .steps {
+    grid-template-columns: 1fr;
+  }
+  .benefits .benefit-list {
+    flex-direction: column;
+  }
+  .nav a {
+    display: none;
+  }
+}
+
+/* Тонкая настройка синего акцента:
+   Чтобы подстроиться под цвет твоего сайта, замени --accent на нужный hex:
+   например --accent: #0b74de;
+*/

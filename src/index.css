@@ -1,0 +1,7 @@
+.MuiFormLabel-root.MuiInputLabel-root.MuiInputLabel-formControl {
+  background-color: #fafafb;
+}
+
+* {
+  transition: .2s;
+}
