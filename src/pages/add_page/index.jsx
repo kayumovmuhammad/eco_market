@@ -1,5 +1,5 @@
 import { Box, Button, FormControl, IconButton, InputLabel, MenuItem, Select, TextField } from '@mui/material';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef, useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import classes from './style.module.css';
@@ -7,41 +7,86 @@ import categories from '../../menu-items/categories';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { MuiTelInput } from 'mui-tel-input';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
+import { isAuth } from '../../api/auth';
+import { Navigate } from 'react-router';
 
-const imagePreviewSize = '150px';
+const MapAddressSelector = ({ setAddressError, addressError, selectedAddress, setSelectedAddress }) => {
+  const mapRef = useRef(null);
+  const [map, setMap] = useState(null);
+  const [coordinates, setCoordinates] = useState([38.573, 68.786]); // Начальные координаты (Москва)
 
-function Image({ url, index, deleteImage }) {
-  const [isHover, setHover] = useState(false);
+  useEffect(() => {
+    window.ymaps.ready(() => {
+      const newMap = new window.ymaps.Map(mapRef.current, {
+        center: coordinates,
+        zoom: 12
+      });
+
+      newMap.events.add('click', async (e) => {
+        const clickedCoords = e.get('coords');
+        setCoordinates(clickedCoords);
+
+        newMap.geoObjects.removeAll();
+
+        const marker = new window.ymaps.Placemark(clickedCoords);
+        newMap.geoObjects.add(marker);
+
+        window.ymaps
+          .geocode(clickedCoords, { results: 1 })
+          .then((res) => {
+            const firstGeoObject = res.geoObjects.get(0);
+            if (firstGeoObject) {
+              const address = firstGeoObject.getAddressLine();
+              setSelectedAddress(address);
+              setAddressError('');
+              //   console.log('Адрес:', address);
+            } else {
+              setSelectedAddress('Адрес не найден');
+            }
+          })
+          .catch((error) => {
+            // console.error('Ошибка geocoding:', error);
+            setSelectedAddress('Ошибка получения адреса');
+          });
+      });
+
+      setMap(newMap);
+
+      return () => {
+        newMap.destroy();
+      };
+    });
+  }, []);
+
   return (
-    <div
-      onMouseEnter={() => {
-        setHover(true);
-      }}
-      onMouseLeave={() => {
-        setHover(false);
-      }}
-      style={{ position: 'relative', width: imagePreviewSize, height: imagePreviewSize }}
-    >
-      <img
-        src={url}
-        alt=""
-        style={{ width: imagePreviewSize, height: imagePreviewSize, borderRadius: '8px', border: '1px solid rgba(0, 0, 0, 0.1)' }}
+    <div>
+      <div
+        ref={mapRef}
+        style={{
+          width: '100%',
+          height: '400px',
+          border: `1px solid ${!addressError ? 'rgba(0, 0, 0, 0.1)' : '#ff4d4f'}`,
+          borderRadius: '5px',
+          overflow: 'hidden'
+        }}
       />
-      {isHover && (
-        <CancelIcon
-          onClick={() => {
-            deleteImage(index);
-          }}
-          sx={{ position: 'absolute', top: '5px', right: '5px', '&:hover': { cursor: 'pointer' } }}
-        ></CancelIcon>
+      {selectedAddress && (
+        <div style={{ marginTop: '10px', padding: '10px', backgroundColor: '#f0f0f0' }}>
+          <strong>Выбранный адрес:</strong> {selectedAddress}
+        </div>
       )}
+      <span style={{ color: '#ff4d4f' }}>{addressError}</span>
     </div>
   );
-}
+};
+const imagePreviewSize = '150px';
 
 export default function AddPage() {
   const [phone, setPhone] = useState('');
   const [error, setError] = useState('');
+
+  const [selectedAddress, setSelectedAddress] = useState('');
+  const [addressError, setAddressError] = useState('');
 
   const [title, setTitle] = useState('');
   const [titleError, setTitleError] = useState('');
@@ -67,42 +112,11 @@ export default function AddPage() {
     }
   };
 
-  const [imageURLs, setImageURLs] = useState([]);
-  const onDrop = useCallback((acceptedFiles) => {
-    let urls = [];
-    for (let file of acceptedFiles) {
-      // console.log(file.type);
-
-      if (file.type.startsWith('image/')) {
-        urls.push(URL.createObjectURL(file));
-      }
-    }
-    setImageURLs((preImageURLs) => {
-      return [...preImageURLs, ...urls];
-    });
-  }, []);
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
-
-  const [category, setCategory] = useState('');
-  const [categoryError, setCategoryError] = useState(false);
-
-  const handleChange = (event) => {
-    setCategory(event.target.value);
-    setCategoryError("");
-  };
-
-  const deleteImage = (index) => {
-    const prImages = [...imageURLs];
-    prImages.splice(index, 1);
-    setImageURLs(prImages);
-  };
-
   const handleSubmit = () => {
     let isError = false;
-    if (!category) {
+    if (!selectedAddress || selectedAddress == 'Ошибка получения адреса' || selectedAddress == 'Адрес не найден') {
       isError = true;
-      setCategoryError(true);
+      setAddressError('*Выберите корректный адрес');
     }
     if (!title) {
       isError = true;
@@ -123,21 +137,23 @@ export default function AddPage() {
     }
 
     console.log('title: ', title);
-    console.log('category: ', category);
     console.log('phone: ', phone);
     console.log('description: ', description);
-    console.log('images: ', imageURLs);
 
     console.log('Submitting to backend...');
   };
 
+  if (!isAuth()) {
+    return <Navigate to="/login" replace />;
+  }
+
   return (
-    <Box sx={{ width: '70%', marginLeft: 'auto', marginRight: 'auto' }}>
+    <Box sx={{ width: '90%', marginLeft: 'auto', marginRight: 'auto' }}>
       <Box sx={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
         <TextField
           error={!!titleError}
           helperText={titleError}
-          sx={{ width: '300px' }}
+          sx={{ width: '100%' }}
           id="outlined-basic"
           label="Название"
           variant="outlined"
@@ -151,28 +167,10 @@ export default function AddPage() {
             }
           }}
         />
-        <FormControl>
-          <InputLabel error={categoryError} id="demo-simple-select-label">
-            Категория
-          </InputLabel>
-          <Select
-            sx={{ width: '300px', maxWidth: '100%' }}
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={category}
-            label="Age"
-            error={categoryError}
-            onChange={handleChange}
-          >
-            {categories.children.map((item) => (
-              <MenuItem value={item.title}>{item.title}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
         {/* <TextField sx={{ width: '300px' }} id="outlined-basic" label="" variant="outlined" /> */}
       </Box>
       <MuiTelInput
-        sx={{ maxWidth: '610px', marginTop: '20px', width: '100%' }}
+        sx={{ marginTop: '20px', width: '100%' }}
         value={phone}
         onChange={handleChangePhone}
         label="Номер телефона"
@@ -185,7 +183,7 @@ export default function AddPage() {
         focusOnSelectCountry
       />
       <TextField
-        sx={{ maxWidth: '610px', marginTop: '20px', width: '100%' }}
+        sx={{ marginTop: '20px', width: '100%' }}
         id="outlined-multiline-static"
         label="Описание"
         multiline
@@ -196,36 +194,16 @@ export default function AddPage() {
         }}
       />
 
-      <h3 style={{ marginBottom: 0, marginTop: '30px', fontWeight: 'normal', color: '#595959' }}>Выберите изображения</h3>
-      <ul
-        style={{
-          display: 'flex',
-          listStyleType: 'none',
-          width: '100%',
-          gap: '10px',
-          overflow: 'auto',
-          padding: '10px',
-          paddingLeft: 0,
-          marginTop: 0
-        }}
-      >
-        <li>
-          <div {...getRootProps()}>
-            <input {...getInputProps()} />
-            <div className={classes.add_button}>
-              <AddCircleIcon sx={{ height: '30px', width: '30px' }} />
-            </div>
-          </div>
-        </li>
-        {imageURLs.map((url, index) => {
-          return (
-            <li key={index}>
-              <Image url={url} index={index} deleteImage={deleteImage}></Image>
-            </li>
-          );
-        })}
-      </ul>
-      <Button onClick={handleSubmit} sx={{ fontSize: '16px' }} variant="contained">
+      <h3 style={{ marginBottom: '5px', marginTop: '30px', fontWeight: 'normal', color: !addressError ? '#595959' : '#ff4d4f' }}>
+        Выберите адрес
+      </h3>
+      <MapAddressSelector
+        setAddressError={setAddressError}
+        addressError={addressError}
+        selectedAddress={selectedAddress}
+        setSelectedAddress={setSelectedAddress}
+      ></MapAddressSelector>
+      <Button style={{ marginTop: '20px' }} onClick={handleSubmit} sx={{ fontSize: '16px' }} variant="contained">
         Опубликовать
       </Button>
     </Box>

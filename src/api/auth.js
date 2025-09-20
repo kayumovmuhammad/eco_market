@@ -19,6 +19,8 @@ export default function login({ mail, password, navigate, setError }) {
     })
     .then((data) => {
       localStorage.setItem('auth', data['status']);
+      localStorage.setItem('role', data['role']);
+      localStorage.setItem('email', mail);
       navigate('/');
     });
 }

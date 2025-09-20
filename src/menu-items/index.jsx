@@ -1,12 +1,11 @@
 // project import
-import categories from './categories';
-import dashboard from './dashboard';
+import { isAuth } from '../api/auth';
 import pages from './page';
 
 // ==============================|| MENU ITEMS ||============================== //
 
 const menuItems = {
-  items: [categories]
+  items: [pages]
 };
 
 export default menuItems;

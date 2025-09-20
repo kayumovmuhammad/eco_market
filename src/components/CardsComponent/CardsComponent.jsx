@@ -6,22 +6,25 @@ import MainCard from 'components/MainCard';
 
 import { Grid } from '@mui/material';
 import { Link } from 'react-router';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 
 function Item({ children }) {
   return (
-    <Link style={{ textDecoration: 'none' }} to={`/item/${children.id}`}>
-      <MainCard
-        sx={{
-          height: '200px',
-          background: `url(${children.image})`,
-          backgroundSize: 'auto 100%',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center'
-        }}
-      ></MainCard>
-      <Typography sx={{ color: 'black', padding: '3px' }}>{children.name}</Typography>
-      <Typography sx={{ marginTop: '-8px', padding: '3px', fontSize: '13px', color: 'rgba(0, 0, 0, .6)' }}>{children.date}</Typography>
-    </Link>
+    <MainCard>
+      <div style={{}}>
+        <h3>{children.name}</h3>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+          <span>{children.address}</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+          <span>{children.phoneNumber}</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+          <span style={{ color: '#0000009e' }}>{children.date}</span>
+        </div>
+      </div>
+    </MainCard>
   );
 }
 
@@ -30,7 +33,7 @@ export default function CardsComponent({ data }) {
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(270px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))',
         gap: '1rem'
       }}
     >

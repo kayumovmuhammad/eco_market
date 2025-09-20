@@ -8,8 +8,9 @@ import DashboardLayout from 'layout/Dashboard';
 const Home = Loadable(lazy(() => import('pages/home')));
 const ItemPage = Loadable(lazy(() => import('pages/item-page')));
 const Categories = Loadable(lazy(() => import('pages/categories')));
-const Publications = Loadable(lazy(() => import('pages/publications')));
-const AddPublication = Loadable(lazy(() => import('pages/add_page')));
+const Orders = Loadable(lazy(() => import('pages/orders')));
+const AddOrder = Loadable(lazy(() => import('pages/add_page')));
+const AdminView = Loadable(lazy(() => import('pages/admin_view')));
 
 // render - color
 const Color = Loadable(lazy(() => import('pages/component-overview/color')));
@@ -30,21 +31,17 @@ const MainRoutes = {
       element: <Home />
     },
     {
-      path: '/categories/:category',
-      element: <Categories />
+      path: '/orders',
+      element: <Orders />
     },
     {
-      path: '/item/:id',
-      element: <ItemPage />
+      path: '/add_order',
+      element: <AddOrder />
     },
     {
-        path: "/publications",
-        element: <Publications />
-    },
-    {
-        path: "/add_publication",
-        element: <AddPublication />
-    },
+      path: '/admin/view',
+      element: <AdminView />
+    }
   ]
 };
 

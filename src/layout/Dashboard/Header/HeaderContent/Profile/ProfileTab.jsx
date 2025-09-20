@@ -6,6 +6,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 
 // assets
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import EditOutlined from '@ant-design/icons/EditOutlined';
 import ProfileOutlined from '@ant-design/icons/ProfileOutlined';
 import LogoutOutlined from '@ant-design/icons/LogoutOutlined';
@@ -20,29 +21,60 @@ import { useNavigate } from 'react-router';
 
 export default function ProfileTab({ handleClose }) {
   const navigate = useNavigate();
+
+  if (localStorage.getItem('role') == 'admin') {
+    return (
+      <List component="nav" sx={{ p: 0, '& .MuiListItemIcon-root': { minWidth: 32 } }}>
+        <ListItemButton
+          onClick={() => {
+            navigate('/admin/view');
+            handleClose();
+          }}
+        >
+          <ListItemIcon>
+            <WidgetsOutlinedIcon sx={{ transform: 'translateX(-5px)' }} />
+          </ListItemIcon>
+          <ListItemText primary="Посмотреть заказы" />
+        </ListItemButton>
+        <ListItemButton
+          onClick={() => {
+            signOut();
+            navigate();
+            handleClose();
+          }}
+        >
+          <ListItemIcon>
+            <LogoutOutlined />
+          </ListItemIcon>
+          <ListItemText primary="Выйти" />
+        </ListItemButton>
+      </List>
+    );
+  }
+
   return (
     <List component="nav" sx={{ p: 0, '& .MuiListItemIcon-root': { minWidth: 32 } }}>
       <ListItemButton
         onClick={() => {
-          navigate('/publications');
+          navigate('/orders');
           handleClose();
         }}
       >
         <ListItemIcon>
           <WidgetsOutlinedIcon sx={{ transform: 'translateX(-5px)' }} />
         </ListItemIcon>
-        <ListItemText primary="Ваши публикации" />
+        <ListItemText primary="Ваши заказы" />
       </ListItemButton>
       <ListItemButton
         onClick={() => {
-          navigate('/add_publication');
+          navigate('/add_order');
           handleClose();
         }}
       >
         <ListItemIcon>
           <AddIcon sx={{ transform: 'translateX(-5px)' }} />
         </ListItemIcon>
-        <ListItemText primary="Добавить публикацию" />
+        <ListItemText primary="Добавить заказ" />
       </ListItemButton>
       <ListItemButton
         onClick={() => {
